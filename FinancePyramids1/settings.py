@@ -9,10 +9,12 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from celery.schedules import crontab
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -20,13 +22,39 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-o78lw=5hcw93!jh9n8)btu%1!c@qw#g44bxob4yi(u7%z)pm2p'
+SECRET_KEY = "django-insecure-@=(g6c4=sxj9j$kvt@pxh#&l7$w7iw=8xg&(uqc8&xgm(x8@h="
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Celery configuration
+# cd FinancePyramids1
+#celery -A FinancePyramids1 worker -l info
+CELERY_BROKER_URL = 'amqp://localhost'
+
+# celery -A main beat -l info
+CELERY_TIMEZONE = "Europe/Kiev"
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_BEAT_SCHEDULE = {
+    "parse_private_bank": {
+        "task": "currency.tasks.parse_private_bank",
+        "schedule": crontab(minute="*/1")
+    },
+    "parse_mono_bank": {
+        "task": "currency.tasks.parse_mono_bank",
+        "schedule": crontab(minute="*/1")
+    },
+    "parse_yahoo": {
+        "task": "currency.tasks.parse_yahoo",
+        "schedule": crontab(minute="*/1")
+    },
+    "parse_vkurse_dp": {
+        "task": "currency.tasks.parse_vkurse_dp",
+        "schedule": crontab(minute="*/1")
+    },
+}
 
 # Application definition
 
@@ -37,6 +65,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'main',
+    'currency',
+    'debug_toolbar',
+    # "bootstrap4",
 ]
 
 MIDDLEWARE = [

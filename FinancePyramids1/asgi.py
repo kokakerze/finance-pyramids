@@ -1,5 +1,5 @@
 """
-ASGI config for FinancePyramids1 project.
+ASGI config for FinancePyramids project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
