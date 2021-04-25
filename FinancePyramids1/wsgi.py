@@ -1,5 +1,5 @@
 """
-WSGI config for FinancePyramids1 project.
+WSGI config for FinancePyramids project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
